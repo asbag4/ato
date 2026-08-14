@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ऑटो की पिछली सीट | Auto Ki Pichhli Seat</title>
+    <meta name="description" content="एक पुरानी ऑटो रिक्शा का सुहाना सफ़र और पुरानी यादों का संगीत।" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --cream-100: #fffbf0;
+        --cream-200: #fbf5e6;
+        --cream-300: #f3e5c8;
+        --gold-300: #dfbe7a;
+        --gold-400: #cca062;
+        --gold-500: #b8860b;
+        --dark-glass: rgba(16, 11, 8, 0.72);
+        --dark-glass-hover: rgba(28, 19, 14, 0.88);
+        --border-warm: rgba(235, 200, 140, 0.16);
+        --border-warm-active: rgba(235, 200, 140, 0.4);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      html, body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background-color: #0d0907;
+        color: var(--cream-200);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        user-select: none;
+      }
+
+      /* STATIC BACKGROUND ARTWORK (Occupies ~90% of visual depth) */
+      .artwork-canvas {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+        background-image: url('/auto_rickshaw_street.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
+
+      /* Subtle warm vintage film grain & vignette (Strictly static) */
+      .vignette-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: radial-gradient(
+          circle at center,
+          rgba(20, 14, 10, 0.05) 0%,
+          rgba(15, 10, 7, 0.35) 75%,
+          rgba(10, 7, 5, 0.7) 100%
+        );
+      }
+
+      /* MAIN APP SHELL */
+      .app-container {
+        position: relative;
+        z-index: 10;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 24px 32px;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .top-left-time {
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        color: var(--cream-300);
+        opacity: 0.85;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      }
+
+      .top-center-status {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: var(--cream-200);
+        background: var(--dark-glass);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 6px 14px;
+        border-radius: 9999px;
+        border: 1px solid var(--border-warm);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #38ef7d;
+        box-shadow: 0 0 8px #38ef7d;
+        display: inline-block;
+      }
+
+      .top-right-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-pill {
+        background: var(--dark-glass);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        color: var(--cream-300);
+        border: 1px solid var(--border-warm);
+        padding: 6px 14px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+
+      .btn-pill:hover {
+        background: var(--dark-glass-hover);
+        color: var(--gold-300);
+        border-color: var(--border-warm-active);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .btn-pill:active {
+        transform: translateY(0);
+      }
+
+      .btn-pill.highlight {
+        border-color: rgba(223, 190, 122, 0.4);
+        color: var(--gold-300);
+      }
+
+      /* CENTER HINDI TITLE */
+      .center-hero {
+        text-align: center;
+        margin: auto;
+        pointer-events: none;
+        padding: 0 16px;
+        max-width: 900px;
+      }
+
+      .hindi-title {
+        font-family: 'Rozha One', 'Yatra One', serif;
+        font-size: clamp(2.6rem, 5.5vw, 4.8rem);
+        font-weight: 400;
+        color: var(--cream-100);
+        letter-spacing: 0.04em;
+        line-height: 1.15;
+        text-shadow: 
+          0 4px 16px rgba(0, 0, 0, 0.9),
+          0 8px 32px rgba(18, 12, 8, 0.8),
+          0 0 40px rgba(223, 190, 122, 0.25);
+        margin-bottom: 12px;
+      }
+
+      .hindi-subtitle {
+        font-family: 'Marcellus', 'Plus Jakarta Sans', serif;
+        font-size: clamp(1rem, 2vw, 1.4rem);
+        font-weight: 400;
+        color: var(--gold-300);
+        letter-spacing: 0.08em;
+        line-height: 1.5;
+        text-shadow: 
+          0 2px 12px rgba(0, 0, 0, 0.95),
+          0 4px 20px rgba(10, 7, 5, 0.9);
+        opacity: 0.95;
+      }
+
+      /* BOTTOM FLOATING COMPACT MUSIC PLAYER */
+      .bottom-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      .music-player-card {
+        background: var(--dark-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-warm);
+        border-radius: 9999px;
+        padding: 8px 18px 8px 10px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(223, 190, 122, 0.05);
+        max-width: 580px;
+        width: 100%;
+        transition: border-color 0.25s ease;
+      }
+
+      .music-player-card:hover {
+        border-color: var(--border-warm-active);
+      }
+
+      /* Circular Album Art */
+      .album-disc {
+        position: relative;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1.5px solid rgba(223, 190, 122, 0.5);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        background: #1a120b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .album-disc img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      .album-disc.playing img {
+        animation: spinDisc 12s linear infinite;
+      }
+
+      @keyframes spinDisc {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      .album-disc-center {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #0d0907;
+        border: 1.5px solid var(--gold-300);
+        z-index: 2;
+      }
+
+      /* Track Info */
+      .track-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 110px;
+        max-width: 140px;
+        overflow: hidden;
+      }
+
+      .track-title {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--cream-100);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        letter-spacing: 0.02em;
+      }
+
+      .track-artist {
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: var(--gold-400);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        letter-spacing: 0.02em;
+      }
+
+      /* Progress Bar & Timing */
+      .progress-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .time-label {
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: var(--cream-300);
+        opacity: 0.75;
+        font-variant-numeric: tabular-nums;
+        min-width: 28px;
+        text-align: center;
+      }
+
+      .progress-track-wrapper {
+        flex: 1;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .progress-track {
+        width: 100%;
+        height: 4px;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.15);
+        position: relative;
+        overflow: hidden;
+        transition: height 0.15s ease;
+      }
+
+      .progress-track-wrapper:hover .progress-track {
+        height: 6px;
+      }
+
+      .progress-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0%;
+        background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+        border-radius: 9999px;
+      }
+
+      /* Player Controls */
+      .player-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-icon {
+        background: transparent;
+        border: none;
+        color: var(--cream-200);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-icon:hover {
+        color: var(--gold-300);
+        background: rgba(255, 255, 255, 0.08);
+        transform: scale(1.08);
+      }
+
+      .btn-icon:active {
+        transform: scale(0.94);
+      }
+
+      .btn-play-pause {
+        width: 36px;
+        height: 36px;
+        background: var(--gold-300);
+        color: #120c08;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .btn-play-pause:hover {
+        background: var(--cream-100);
+        color: #000;
+        transform: scale(1.08);
+      }
+
+      /* POPUP MODAL (Playlist URL) */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(10, 7, 5, 0.65);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        padding: 20px;
+      }
+
+      .modal-backdrop.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-card {
+        background: rgba(22, 15, 11, 0.94);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--border-warm-active);
+        border-radius: 20px;
+        padding: 24px 28px;
+        max-width: 440px;
+        width: 100%;
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 30px rgba(223, 190, 122, 0.1);
+        transform: scale(0.94) translateY(8px);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .modal-backdrop.open .modal-card {
+        transform: scale(1) translateY(0);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .modal-title {
+        font-family: 'Marcellus', serif;
+        font-size: 1.05rem;
+        color: var(--cream-100);
+        letter-spacing: 0.03em;
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: var(--cream-300);
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+
+      .modal-close:hover {
+        opacity: 1;
+        color: var(--gold-300);
+      }
+
+      .modal-input {
+        width: 100%;
+        background: rgba(10, 7, 5, 0.85);
+        border: 1px solid var(--border-warm);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: var(--cream-100);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.8rem;
+        outline: none;
+        margin-bottom: 16px;
+        transition: border-color 0.2s;
+      }
+
+      .modal-input:focus {
+        border-color: var(--gold-300);
+      }
+
+      .modal-btn-load {
+        width: 100%;
+        background: var(--gold-300);
+        color: #120c08;
+        border: none;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .modal-btn-load:hover {
+        background: var(--cream-100);
+        box-shadow: 0 4px 16px rgba(223, 190, 122, 0.3);
+      }
+
+      /* SONGS / PLAYLIST LIST DRAWER */
+      .songs-drawer {
+        position: fixed;
+        top: 68px;
+        right: 32px;
+        z-index: 45;
+        background: rgba(20, 14, 10, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-warm);
+        border-radius: 16px;
+        padding: 14px;
+        width: 320px;
+        max-height: 380px;
+        overflow-y: auto;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+        display: none;
+      }
+
+      .songs-drawer.open {
+        display: block;
+        animation: fadeInDown 0.2s ease;
+      }
+
+      @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .drawer-header {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--gold-400);
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid rgba(235, 200, 140, 0.1);
+      }
+
+      .song-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.15s;
+        margin-bottom: 2px;
+      }
+
+      .song-item:hover {
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .song-item.active {
+        background: rgba(223, 190, 122, 0.15);
+      }
+
+      .song-item-info {
+        overflow: hidden;
+      }
+
+      .song-item-name {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--cream-100);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .song-item.active .song-item-name {
+        color: var(--gold-300);
+      }
+
+      .song-item-artist {
+        font-size: 0.68rem;
+        color: var(--cream-300);
+        opacity: 0.7;
+      }
+
+      /* Hidden YouTube Player Iframe */
+      #yt-player-wrapper {
+        position: fixed;
+        bottom: -9999px;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0.01;
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      /* RESPONSIVE DESIGN (Preserving 16:9 poster feel & Mobile refinement) */
+      @media (max-width: 768px) {
+        .app-container {
+          padding: 16px;
+        }
+
+        .top-bar {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .top-center-status {
+          order: 3;
+          margin: 4px auto 0 auto;
+        }
+
+        .top-right-controls {
+          gap: 5px;
+        }
+
+        .btn-pill {
+          padding: 5px 10px;
+          font-size: 0.7rem;
+        }
+
+        .hindi-title {
+          font-size: 2.3rem;
+        }
+
+        .hindi-subtitle {
+          font-size: 0.95rem;
+        }
+
+        .music-player-card {
+          padding: 6px 14px 6px 8px;
+          gap: 10px;
+        }
+
+        .track-info {
+          min-width: 80px;
+          max-width: 95px;
+        }
+
+        .songs-drawer {
+          right: 16px;
+          width: calc(100vw - 32px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- STATIC CINEMATIC ARTWORK (100% viewport coverage, strictly static) -->
+    <div class="artwork-canvas" id="bg-artwork" aria-hidden="true"></div>
+    <div class="vignette-overlay" aria-hidden="true"></div>
+
+    <!-- MAIN INTERFACE -->
+    <main class="app-container">
+      <!-- TOP BAR -->
+      <header class="top-bar">
+        <!-- TOP LEFT: Live / Nostalgic Time -->
+        <div class="top-left-time" id="clock-display">1:32 PM</div>
+
+        <!-- TOP CENTER: Listener Count -->
+        <div class="top-center-status" id="listener-badge">
+          <span class="status-dot"></span>
+          <span id="listener-count">1107 online</span>
+        </div>
+
+        <!-- TOP RIGHT: Controls & Playlist URL button -->
+        <nav class="top-right-controls">
+          <a href="https://open.spotify.com/playlist/37i9dQZF1DX14B82P3b7Tq" target="_blank" rel="noopener noreferrer" class="btn-pill" id="btn-spotify" title="Open in Spotify">
+            <span>Spotify</span>
+          </a>
+          <a href="https://music.youtube.com/search?q=old+hindi+songs+golden+era" target="_blank" rel="noopener noreferrer" class="btn-pill" id="btn-ytmusic" title="Open in YouTube Music">
+            <span>YT Music</span>
+          </a>
+          <button class="btn-pill" id="btn-playlists" type="button" title="View Playlists">
+            <span>Playlists</span>
+          </button>
+          <button class="btn-pill" id="btn-songs" type="button" title="View Tracklist">
+            <span>Songs</span>
+          </button>
+          <button class="btn-pill highlight" id="btn-playlist-url" type="button" title="Custom YouTube Playlist URL">
+            <span>Playlist URL</span>
+          </button>
+        </nav>
+      </header>
+
+      <!-- CENTER: NOSTALGIC HINDI POSTER TYPOGRAPHY -->
+      <section class="center-hero">
+        <h1 class="hindi-title">ऑटो की पिछली सीट</h1>
+        <p class="hindi-subtitle">"वो सफ़र... जो मंज़िल से ज़्यादा याद रहा।"</p>
+      </section>
+
+      <!-- BOTTOM CENTER: COMPACT FLOATING MUSIC PLAYER -->
+      <footer class="bottom-bar">
+        <div class="music-player-card" id="music-player">
+          <!-- Circular album artwork -->
+          <div class="album-disc" id="album-disc">
+            <img 
+              id="album-art" 
+              src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150&auto=format&fit=crop&q=80" 
+              alt="Song Artwork" 
+              referrerpolicy="no-referrer" 
+            />
+            <div class="album-disc-center"></div>
+          </div>
+
+          <!-- Song Title & Artist -->
+          <div class="track-info">
+            <div class="track-title" id="track-title">मुसाफ़िर हूँ यारों</div>
+            <div class="track-artist" id="track-artist">किशोर कुमार • आर. डी. बर्मन</div>
+          </div>
+
+          <!-- Progress Bar & Duration -->
+          <div class="progress-section">
+            <span class="time-label" id="current-time">0:00</span>
+            <div class="progress-track-wrapper" id="progress-wrapper">
+              <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+            </div>
+            <span class="time-label" id="total-time">4:46</span>
+          </div>
+
+          <!-- Controls: Prev, Play/Pause, Next -->
+          <div class="player-controls">
+            <button class="btn-icon" id="btn-prev" type="button" title="Previous Song" aria-label="Previous">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                <line x1="5" y1="19" x2="5" y2="5"></line>
+              </svg>
+            </button>
+            
+            <button class="btn-icon btn-play-pause" id="btn-play" type="button" title="Play / Pause" aria-label="Play">
+              <svg id="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="6 3 20 12 6 21 6 3"></polygon>
+              </svg>
+              <svg id="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+            </button>
+
+            <button class="btn-icon" id="btn-next" type="button" title="Next Song" aria-label="Next">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- POPUP MODAL: Playlist URL -->
+    <div class="modal-backdrop" id="playlist-modal" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">Paste YouTube Playlist URL</h3>
+          <button class="modal-close" id="modal-close" type="button" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <input 
+          type="text" 
+          class="modal-input" 
+          id="playlist-url-input" 
+          value="https://youtube.com/playlist?list=PLDIoUOhQQPlWm_njQtKkNIk5RYSGgzomm" 
+          placeholder="https://youtube.com/playlist?list=..." 
+        />
+        <button class="modal-btn-load" id="btn-load-playlist" type="button">Load Playlist</button>
+      </div>
+    </div>
+
+    <!-- SONGS / TRACKLIST DRAWER -->
+    <div class="songs-drawer" id="songs-drawer">
+      <div class="drawer-header">पुराने सुहाने नग़मे (Tracklist)</div>
+      <div id="songs-list-container"></div>
+    </div>
+
+    <!-- PLAYLISTS DRAWER -->
+    <div class="songs-drawer" id="playlists-drawer">
+      <div class="drawer-header">सफ़र की प्लेलिस्ट्स (Playlists)</div>
+      <div id="playlists-list-container"></div>
+    </div>
+
+    <!-- HIDDEN YOUTUBE PLAYER CONTAINER -->
+    <div id="yt-player-wrapper">
+      <div id="yt-player"></div>
+    </div>
+
+    <!-- VANILLA JAVASCRIPT APP LOGIC -->
+    <script>
+      // CURATED NOSTALGIC HINDI TRAVEL TRACKS
+      const NOSTALGIC_TRACKS = [
+        {
+          title: "मुसाफ़िर हूँ यारों",
+          artist: "किशोर कुमार • आर. डी. बर्मन",
+          duration: 286,
+          youtubeId: "Wv0D9b6y-cQ",
+          art: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150&auto=format&fit=crop&q=80"
+        },
+        {
+          title: "कहीं दूर जब दिन ढल जाए",
+          artist: "मुकेश • सलिल चौधरी",
+          duration: 337,
+          youtubeId: "zVp3Zk4wzE0",
+          art: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=150&auto=format&fit=crop&q=80"
+        },
+        {
+          title: "चला जाता हूँ किसी की धुन में",
+          artist: "किशोर कुमार • आर. डी. बर्मन",
+          duration: 275,
+          youtubeId: "sD4qW3n7k30",
+          art: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=150&auto=format&fit=crop&q=80"
+        },
+        {
+          title: "सुहाना सफ़र और ये मौसम हसीं",
+          artist: "मुकेश • सलिल चौधरी",
+          duration: 232,
+          youtubeId: "P_Nl3R6T5h4",
+          art: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150&auto=format&fit=crop&q=80"
+        },
+        {
+          title: "ये शाम मस्तानी",
+          artist: "किशोर कुमार • आर. डी. बर्मन",
+          duration: 279,
+          youtubeId: "fM5k8e7jJ4w",
+          art: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=150&auto=format&fit=crop&q=80"
+        },
+        {
+          title: "आने वाला पल जाने वाला है",
+          artist: "किशोर कुमार • आर. डी. बर्मन",
+          duration: 280,
+          youtubeId: "yXp4M-09Hqk",
+          art: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=150&auto=format&fit=crop&q=80"
+        },
+        {
+          title: "ज़िंदगी कैसी है पहेली",
+          artist: "मन्ना डे • सलिल चौधरी",
+          duration: 218,
+          youtubeId: "2e_Wq4iE84s",
+          art: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=150&auto=format&fit=crop&q=80"
+        },
+        {
+          title: "एक अजनबी हसीना से",
+          artist: "किशोर कुमार • आर. डी. बर्मन",
+          duration: 265,
+          youtubeId: "2n7x7k8p9m0",
+          art: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=150&auto=format&fit=crop&q=80"
+        }
+      ];
+
+      const CURATED_PLAYLISTS = [
+        {
+          name: "ऑटो का पुराना रेडियो",
+          desc: "70s & 80s Kishore, Rafi & RD Burman Classics",
+          url: "https://youtube.com/playlist?list=PLDIoUOhQQPlWm_njQtKkNIk5RYSGgzomm"
+        },
+        {
+          name: "बारिश और भीगी सड़कें",
+          desc: "Monsoon Melodies & Nostalgic Rhythms",
+          url: "https://youtube.com/playlist?list=PL9bw4s64C6b5b5M-Y7hEw7fG5C0D4k3Qp"
+        },
+        {
+          name: "रात का सुनसान सफ़र",
+          desc: "Late Night Ghazals & Melancholic Strings",
+          url: "https://youtube.com/playlist?list=PLDIoUOhQQPlX-s9pG7vO2C-W9Q7K1L"
+        }
+      ];
+
+      // STATE
+      let currentTrackIndex = 0;
+      let isPlaying = false;
+      let currentTime = 0;
+      let duration = NOSTALGIC_TRACKS[0].duration;
+      let ytPlayer = null;
+      let isYtReady = false;
+      let isUsingCustomPlaylist = false;
+      let synthAudioCtx = null;
+      let synthInterval = null;
+      let progressTimer = null;
+
+      // DOM ELEMENTS
+      const trackTitleEl = document.getElementById('track-title');
+      const trackArtistEl = document.getElementById('track-artist');
+      const albumArtEl = document.getElementById('album-art');
+      const albumDiscEl = document.getElementById('album-disc');
+      const currentTimeEl = document.getElementById('current-time');
+      const totalTimeEl = document.getElementById('total-time');
+      const progressFillEl = document.getElementById('progress-fill');
+      const progressWrapperEl = document.getElementById('progress-wrapper');
+      const btnPlayEl = document.getElementById('btn-play');
+      const iconPlayEl = document.getElementById('icon-play');
+      const iconPauseEl = document.getElementById('icon-pause');
+      const btnPrevEl = document.getElementById('btn-prev');
+      const btnNextEl = document.getElementById('btn-next');
+      const playlistModalEl = document.getElementById('playlist-modal');
+      const btnPlaylistUrlEl = document.getElementById('btn-playlist-url');
+      const modalCloseEl = document.getElementById('modal-close');
+      const btnLoadPlaylistEl = document.getElementById('btn-load-playlist');
+      const playlistUrlInputEl = document.getElementById('playlist-url-input');
+      const btnSongsEl = document.getElementById('btn-songs');
+      const btnPlaylistsEl = document.getElementById('btn-playlists');
+      const songsDrawerEl = document.getElementById('songs-drawer');
+      const playlistsDrawerEl = document.getElementById('playlists-drawer');
+      const songsListContainerEl = document.getElementById('songs-list-container');
+      const playlistsListContainerEl = document.getElementById('playlists-list-container');
+      const clockDisplayEl = document.getElementById('clock-display');
+      const listenerCountEl = document.getElementById('listener-count');
+
+      // LIVE CLOCK (Top Left)
+      function updateClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+        clockDisplayEl.textContent = `${hours}:${minutesStr} ${ampm}`;
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      // LISTENER COUNT JITTER (Top Center subtle natural fluctuation)
+      let baseListeners = 1107;
+      setInterval(() => {
+        const delta = Math.floor(Math.random() * 7) - 3;
+        baseListeners = Math.max(1080, Math.min(1150, baseListeners + delta));
+        listenerCountEl.textContent = `${baseListeners} online`;
+      }, 7000);
+
+      // FORMAT SECONDS -> M:SS
+      function formatTime(secs) {
+        if (isNaN(secs) || secs < 0) return "0:00";
+        const m = Math.floor(secs / 60);
+        const s = Math.floor(secs % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+      }
+
+      // LOAD TRACK
+      function loadTrack(index) {
+        currentTrackIndex = (index + NOSTALGIC_TRACKS.length) % NOSTALGIC_TRACKS.length;
+        const track = NOSTALGIC_TRACKS[currentTrackIndex];
+        
+        trackTitleEl.textContent = track.title;
+        trackArtistEl.textContent = track.artist;
+        albumArtEl.src = track.art;
+        duration = track.duration;
+        totalTimeEl.textContent = formatTime(duration);
+        currentTime = 0;
+        updateProgressUI();
+        renderSongsList();
+
+        if (isYtReady && ytPlayer && !isUsingCustomPlaylist) {
+          try {
+            if (isPlaying) {
+              ytPlayer.loadVideoById(track.youtubeId);
+            } else {
+              ytPlayer.cueVideoById(track.youtubeId);
+            }
+          } catch (e) {
+            console.log("YT Player error", e);
+          }
+        }
+      }
+
+      // UPDATE PROGRESS UI
+      function updateProgressUI() {
+        currentTimeEl.textContent = formatTime(currentTime);
+        const pct = duration > 0 ? (currentTime / duration) * 100 : 0;
+        progressFillEl.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+      }
+
+      // PLAY / PAUSE
+      function togglePlay() {
+        if (isPlaying) {
+          pauseAudio();
+        } else {
+          playAudio();
+        }
+      }
+
+      function playAudio() {
+        isPlaying = true;
+        iconPlayEl.style.display = 'none';
+        iconPauseEl.style.display = 'block';
+        albumDiscEl.classList.add('playing');
+
+        if (isYtReady && ytPlayer) {
+          try {
+            ytPlayer.playVideo();
+          } catch (e) {
+            startFallbackSynth();
+          }
+        } else {
+          startFallbackSynth();
+        }
+
+        startProgressTimer();
+      }
+
+      function pauseAudio() {
+        isPlaying = false;
+        iconPlayEl.style.display = 'block';
+        iconPauseEl.style.display = 'none';
+        albumDiscEl.classList.remove('playing');
+
+        if (isYtReady && ytPlayer) {
+          try {
+            ytPlayer.pauseVideo();
+          } catch (e) {}
+        }
+        stopFallbackSynth();
+        stopProgressTimer();
+      }
+
+      function startProgressTimer() {
+        stopProgressTimer();
+        progressTimer = setInterval(() => {
+          if (!isPlaying) return;
+          
+          if (isYtReady && ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+            try {
+              const ytTime = ytPlayer.getCurrentTime();
+              const ytDur = ytPlayer.getDuration();
+              if (ytTime && ytTime > 0) {
+                currentTime = ytTime;
+                if (ytDur && ytDur > 0) {
+                  duration = ytDur;
+                  totalTimeEl.textContent = formatTime(duration);
+                }
+                updateProgressUI();
+                return;
+              }
+            } catch (e) {}
+          }
+
+          currentTime += 1;
+          if (currentTime >= duration) {
+            nextTrack();
+          } else {
+            updateProgressUI();
+          }
+        }, 1000);
+      }
+
+      function stopProgressTimer() {
+        if (progressTimer) {
+          clearInterval(progressTimer);
+          progressTimer = null;
+        }
+      }
+
+      function prevTrack() {
+        if (isUsingCustomPlaylist && isYtReady && ytPlayer) {
+          try { ytPlayer.previousVideo(); return; } catch(e) {}
+        }
+        loadTrack(currentTrackIndex - 1);
+        if (isPlaying) playAudio();
+      }
+
+      function nextTrack() {
+        if (isUsingCustomPlaylist && isYtReady && ytPlayer) {
+          try { ytPlayer.nextVideo(); return; } catch(e) {}
+        }
+        loadTrack(currentTrackIndex + 1);
+        if (isPlaying) playAudio();
+      }
+
+      // FALLBACK VINTAGE LO-FI NOSTALGIC SOUND (Web Audio API)
+      function startFallbackSynth() {
+        try {
+          if (!synthAudioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            synthAudioCtx = new AudioContext();
+          }
+          if (synthAudioCtx.state === 'suspended') {
+            synthAudioCtx.resume();
+          }
+
+          if (synthInterval) clearInterval(synthInterval);
+          
+          // Warm nostalgic chord progression (G - Em - C - D) in Indian pentatonic style
+          const notes = [196.00, 220.00, 246.94, 293.66, 329.63, 392.00];
+          synthInterval = setInterval(() => {
+            if (!isPlaying || !synthAudioCtx) return;
+            const note = notes[Math.floor(Math.random() * notes.length)];
+            playNostalgicChime(note);
+          }, 3200);
+          playNostalgicChime(220.00);
+        } catch (e) {
+          console.log("WebAudio unavailable");
+        }
+      }
+
+      function playNostalgicChime(freq) {
+        if (!synthAudioCtx || synthAudioCtx.state !== 'running') return;
+        const osc = synthAudioCtx.createOscillator();
+        const gain = synthAudioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, synthAudioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(0.001, synthAudioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.04, synthAudioCtx.currentTime + 0.4);
+        gain.gain.exponentialRampToValueAtTime(0.0001, synthAudioCtx.currentTime + 3.0);
+        
+        osc.connect(gain);
+        gain.connect(synthAudioCtx.destination);
+        osc.start();
+        osc.stop(synthAudioCtx.currentTime + 3.1);
+      }
+
+      function stopFallbackSynth() {
+        if (synthInterval) {
+          clearInterval(synthInterval);
+          synthInterval = null;
+        }
+      }
+
+      // PROGRESS SCRUBBING
+      progressWrapperEl.addEventListener('click', (e) => {
+        const rect = progressWrapperEl.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        const pct = Math.max(0, Math.min(1, clickX / width));
+        currentTime = pct * duration;
+        updateProgressUI();
+
+        if (isYtReady && ytPlayer && typeof ytPlayer.seekTo === 'function') {
+          try {
+            ytPlayer.seekTo(currentTime, true);
+          } catch(e) {}
+        }
+      });
+
+      // EVENT LISTENERS
+      btnPlayEl.addEventListener('click', togglePlay);
+      btnPrevEl.addEventListener('click', prevTrack);
+      btnNextEl.addEventListener('click', nextTrack);
+
+      // MODAL CONTROLS
+      btnPlaylistUrlEl.addEventListener('click', () => {
+        playlistModalEl.classList.add('open');
+        songsDrawerEl.classList.remove('open');
+        playlistsDrawerEl.classList.remove('open');
+        playlistUrlInputEl.focus();
+      });
+
+      modalCloseEl.addEventListener('click', () => {
+        playlistModalEl.classList.remove('open');
+      });
+
+      playlistModalEl.addEventListener('click', (e) => {
+        if (e.target === playlistModalEl) {
+          playlistModalEl.classList.remove('open');
+        }
+      });
+
+      // EXTRACT YOUTUBE PLAYLIST ID OR VIDEO ID
+      function parseYouTubeUrl(url) {
+        if (!url) return null;
+        const listMatch = url.match(/[?&]list=([^#&?]+)/);
+        if (listMatch && listMatch[1]) {
+          return { type: 'playlist', id: listMatch[1] };
+        }
+        const videoMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+        if (videoMatch && videoMatch[1]) {
+          return { type: 'video', id: videoMatch[1] };
+        }
+        return { type: 'playlist', id: url.trim() };
+      }
+
+      // LOAD PLAYLIST ACTION
+      btnLoadPlaylistEl.addEventListener('click', () => {
+        const url = playlistUrlInputEl.value.trim();
+        if (!url) return;
+
+        const parsed = parseYouTubeUrl(url);
+        if (parsed) {
+          isUsingCustomPlaylist = true;
+          trackTitleEl.textContent = "कस्टम प्लेलिस्ट";
+          trackArtistEl.textContent = "YouTube Playlist • ऑटो रेडियो";
+          
+          if (isYtReady && ytPlayer) {
+            try {
+              if (parsed.type === 'playlist') {
+                ytPlayer.loadPlaylist({ list: parsed.id, listType: 'playlist' });
+              } else {
+                ytPlayer.loadVideoById(parsed.id);
+              }
+              playAudio();
+            } catch (e) {
+              console.log("Could not load playlist directly into YT player:", e);
+            }
+          }
+          playlistModalEl.classList.remove('open');
+        }
+      });
+
+      // SONGS DRAWER
+      btnSongsEl.addEventListener('click', () => {
+        songsDrawerEl.classList.toggle('open');
+        playlistsDrawerEl.classList.remove('open');
+      });
+
+      btnPlaylistsEl.addEventListener('click', () => {
+        playlistsDrawerEl.classList.toggle('open');
+        songsDrawerEl.classList.remove('open');
+      });
+
+      // Close drawers on outside click
+      document.addEventListener('click', (e) => {
+        if (!btnSongsEl.contains(e.target) && !songsDrawerEl.contains(e.target)) {
+          songsDrawerEl.classList.remove('open');
+        }
+        if (!btnPlaylistsEl.contains(e.target) && !playlistsDrawerEl.contains(e.target)) {
+          playlistsDrawerEl.classList.remove('open');
+        }
+      });
+
+      // RENDER SONGS LIST
+      function renderSongsList() {
+        songsListContainerEl.innerHTML = '';
+        NOSTALGIC_TRACKS.forEach((track, idx) => {
+          const item = document.createElement('div');
+          item.className = `song-item ${idx === currentTrackIndex ? 'active' : ''}`;
+          item.innerHTML = `
+            <div class="song-item-info">
+              <div class="song-item-name">${track.title}</div>
+              <div class="song-item-artist">${track.artist}</div>
+            </div>
+            <div style="font-size: 0.7rem; color: var(--cream-300); opacity: 0.6;">${formatTime(track.duration)}</div>
+          `;
+          item.addEventListener('click', () => {
+            isUsingCustomPlaylist = false;
+            loadTrack(idx);
+            playAudio();
+            songsDrawerEl.classList.remove('open');
+          });
+          songsListContainerEl.appendChild(item);
+        });
+      }
+
+      // RENDER PLAYLISTS LIST
+      function renderPlaylistsList() {
+        playlistsListContainerEl.innerHTML = '';
+        CURATED_PLAYLISTS.forEach((pl) => {
+          const item = document.createElement('div');
+          item.className = 'song-item';
+          item.innerHTML = `
+            <div class="song-item-info">
+              <div class="song-item-name">${pl.name}</div>
+              <div class="song-item-artist">${pl.desc}</div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="color: var(--gold-300); opacity: 0.8;">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          `;
+          item.addEventListener('click', () => {
+            playlistUrlInputEl.value = pl.url;
+            btnLoadPlaylistEl.click();
+            playlistsDrawerEl.classList.remove('open');
+          });
+          playlistsListContainerEl.appendChild(item);
+        });
+      }
+
+      // INITIALIZE UI
+      loadTrack(0);
+      renderSongsList();
+      renderPlaylistsList();
+
+      // YOUTUBE IFRAME PLAYER API INTEGRATION
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      window.onYouTubeIframeAPIReady = function() {
+        ytPlayer = new YT.Player('yt-player', {
+          height: '200',
+          width: '200',
+          videoId: NOSTALGIC_TRACKS[0].youtubeId,
+          playerVars: {
+            playsinline: 1,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            rel: 0,
+            modestbranding: 1
+          },
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      };
+
+      function onPlayerReady(event) {
+        isYtReady = true;
+      }
+
+      function onPlayerStateChange(event) {
+        // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
+        if (event.data === YT.PlayerState.PLAYING) {
+          isPlaying = true;
+          iconPlayEl.style.display = 'none';
+          iconPauseEl.style.display = 'block';
+          albumDiscEl.classList.add('playing');
+          startProgressTimer();
+
+          // Auto update title if available from YouTube video data
+          if (ytPlayer && typeof ytPlayer.getVideoData === 'function') {
+            const data = ytPlayer.getVideoData();
+            if (data && data.title && isUsingCustomPlaylist) {
+              trackTitleEl.textContent = data.title;
+              trackArtistEl.textContent = data.author || "YouTube Music";
+            }
+          }
+        } else if (event.data === YT.PlayerState.PAUSED) {
+          isPlaying = false;
+          iconPlayEl.style.display = 'block';
+          iconPauseEl.style.display = 'none';
+          albumDiscEl.classList.remove('playing');
+        } else if (event.data === YT.PlayerState.ENDED) {
+          nextTrack();
+        }
+      }
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,6 @@
+{
+  "name": "Auto Ki Pichhli Seat",
+  "description": "A premium nostalgic Indian music experience set against an original cinematic auto-rickshaw street scene.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
